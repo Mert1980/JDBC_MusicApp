@@ -13,7 +13,7 @@ public class Main {
             return;
         }
 
-        List<Artist> artists = datasource.queryArtists();
+        List<Artist> artists = datasource.queryArtists(3);
         if(artists == null){
             System.out.println("No artists!");
             return;
