@@ -37,6 +37,7 @@ public class Main {
         }
 
         datasource.querySongsMetadata();
+        datasource.getCount("artists");
         datasource.close();
     }
 }
