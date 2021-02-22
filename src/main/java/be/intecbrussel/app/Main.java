@@ -2,6 +2,7 @@ package be.intecbrussel.app;
 
 import be.intecbrussel.data.Datasource;
 import be.intecbrussel.model.Artist;
+import be.intecbrussel.model.SongArtist;
 
 import java.util.List;
 
@@ -22,10 +23,17 @@ public class Main {
             System.out.printf("ID = %s, Name = %s \n", artist.getId(), artist.getName());
         }
 
-        List<String> albumsForArtist = datasource.queryAlbumsForArtist("Iron Maiden", Datasource.ORDER_BY_ASC);
+        List<String> albumsForArtist = datasource.queryAlbumsForArtist("Carole King", Datasource.ORDER_BY_DESC);
 
         for (String album: albumsForArtist){
             System.out.println(album);
+        }
+
+        List<SongArtist> songArtists = datasource.queryArtistsForSong("Go your own way", Datasource.ORDER_BY_ASC);
+        if(songArtists != null){
+            for (SongArtist artist : songArtists){
+                System.out.println(artist);
+            }
         }
         datasource.close();
     }
