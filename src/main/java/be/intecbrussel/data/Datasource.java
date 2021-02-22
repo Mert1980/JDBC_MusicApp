@@ -5,6 +5,7 @@ import be.intecbrussel.model.Song;
 import be.intecbrussel.model.SongArtist;
 import org.sqlite.jdbc4.JDBC4Connection;
 
+import javax.naming.PartialResultException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,11 +88,17 @@ public class Datasource {
             COLUMN_SONG_ALBUM + ", " + COLUMN_SONG_TRACK + " FROM " + TABLE_ARTIST_SONG_VIEW +
             " WHERE " + COLUMN_SONG_TITLE + " = \"";
 
+    public static final String QUERY_VIEW_SONG_PREP =  "SELECT " + COLUMN_ARTIST_NAME + ", " +
+            COLUMN_SONG_ALBUM + ", " + COLUMN_SONG_TRACK + " FROM " + TABLE_ARTIST_SONG_VIEW +
+            " WHERE " + COLUMN_SONG_TITLE + " = ?";
+
     private Connection conn;
+    private PreparedStatement querySongInfoView;
 
     public boolean open() {
         try {
             conn = DriverManager.getConnection(CONNECTION_STRING);
+            querySongInfoView = conn.prepareStatement(QUERY_VIEW_SONG_PREP);
             return true;
         } catch(SQLException e) {
             System.out.println("Couldn't connect to database: " + e.getMessage());
@@ -101,6 +108,9 @@ public class Datasource {
 
     public void close() {
         try {
+            if(querySongInfoView != null){
+                querySongInfoView.close();
+            }
             if(conn != null) {
                 conn.close();
             }
@@ -248,16 +258,13 @@ public class Datasource {
     }
 
     public List<SongArtist> querySongInfoView(String title) {
-        StringBuilder sb = new StringBuilder(QUERY_VIEW_SONG_INFO);
-        sb.append(title);
-        sb.append("\"");
 
-        System.out.println(sb.toString());
-
-        try (Statement statement = conn.createStatement();
-             ResultSet results = statement.executeQuery(sb.toString())) {
+        try {
+            querySongInfoView.setString(1, title);
+            ResultSet results = querySongInfoView.executeQuery();
 
             List<SongArtist> songArtists = new ArrayList<>();
+
             while(results.next()) {
                 SongArtist songArtist = new SongArtist();
                 songArtist.setArtistName(results.getString(1));
