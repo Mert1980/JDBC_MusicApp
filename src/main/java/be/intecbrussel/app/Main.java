@@ -38,6 +38,23 @@ public class Main {
 
         datasource.querySongsMetadata();
         datasource.getCount("artists");
+        datasource.createViewForSongArtists();
+
+        datasource.createViewForSongArtists();
+
+        songArtists = datasource.querySongInfoView("She's On Fire");
+
+        if(songArtists.isEmpty()) {
+            System.out.println("Couldn't find the artist for the song");
+            return;
+        }
+
+        for(SongArtist artist : songArtists) {
+            System.out.println("FROM VIEW - Artist name = " + artist.getArtistName() +
+                    " Album name = " + artist.getAlbumName() +
+                    " Track number = " + artist.getTrack());
+        }
+
         datasource.close();
     }
 }
